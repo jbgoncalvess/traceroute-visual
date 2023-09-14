@@ -4,11 +4,14 @@ def busca(ping):
     from scapy.all import IP, ICMP, sr1  # Importar com "from" para não ter que usar scapy.all.  ...
     from IPinfo_geoloc import get_lat_long
     from Construcao_map import map
+    from GeoIP2 import get_lat_lon
 
     ttl_limit = 30  # Define um limite máximo de TTL para evitar loops infinitos
     ip_anterior = 0  # Valor inicial para fazer a comparação
     caminho_geral = []  #Onde estão os dados do data, sem casts e diversos
     localizacoes=[] #Dicionário com os dados com chave e valor certinho pra "Construcao_map - map"
+    dados_formatados = []
+    localizacoes_geo = []
 
     for ttl in range(1, ttl_limit + 1):
 
@@ -19,9 +22,18 @@ def busca(ping):
             break
 
         if response:
-            #print('TTL: {} -- IP: {}'.format(ttl, response.src))  # TTL e IPv4 do salto
+            print('TTL: {} -- IP: {}'.format(ttl, response.src))  # TTL e IPv4 do salto
+            dados_formatados.append(get_lat_lon(response.src))
             caminho_geral.append(get_lat_long(response.src))  # Se o IPv4 é válido, chamo o IPinfo e pego o data(conjunto de info)
             ip_anterior = response.src  # Para não repetir o IP, após chegar na rede desejada, armazeno a ultima resposta para comparar
+
+    for dados in dados_formatados:
+        if dados:
+            # print(dados)
+            localizacoes_geo.append(dados)
+
+    print(caminho_geral)
+    print(localizacoes_geo)
 
     for dados_local in caminho_geral:   # Dados local é cada página do meu dicionário
         if 'bogon' not in dados_local:
