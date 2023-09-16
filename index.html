@@ -14,7 +14,7 @@
             padding: 0;
         }
         #map_canvas {
-            height: 600px;
+            height: 900px;
         }
         #marker {
             width: 30px;
@@ -84,7 +84,7 @@
 <div id="map-container">
     <div id="search-box-container">
         <input type="text" id="search-input" name="hostname" placeholder="Digite um site">
-        <button id="go-button" onclick="testRenato();">Ir</button>
+        <button id="go-button" onclick="post_get_back();">Ir</button>
     </div>
     <div id="map_canvas"></div>
 </div>
@@ -117,19 +117,59 @@
             position: new google.maps.LatLng(startPos[0], startPos[1]),
             map: map
         });
-
-
-
-
     }
+
+    async function post_get_back(){
+
+            // Pego os dados da caixinha de entrada
+            const site = document.getElementById('search-input').value;
+
+            // Verifica se o campo não está vazio
+            if (site.trim() !== '') {
+            // Crie um objeto com os dados a serem enviados
+            const dados = site
+
+            // Faça uma solicitação POST para o back-end
+            fetch('http://localhost:5000/hostname', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+        },
+            body: JSON.stringify(dados)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                testRenato(data);       //Ja devolvo no post do cliente
+            // Lida com a resposta do servidor, se necessário
+        })
+            .catch(error => {
+            console.error('Erro ao enviar dados para o back-end:', error);
+        });
+        } else {
+            // Campo vazio, pode lidar com isso de acordo com seus requisitos
+            alert('Por favor, adiciona um site ou um ip antes de continuar.');
+        }
+       // await dados_back()  //chamar pra pegar dados do back. OUTRA ROTA
+
+}
+
+    // async function dados_back() {
+    //     try {
+    //         const data = await fetch('http://localhost:5000/dados').then(response => response.json());
+    //         console.log(data)
+    //         await testRenato(data);
+    //     } catch (error) {
+    //         console.error('Erro ao carregar dados do backend:', error);
+    //     }
+    // }
     //TESTE COMENTÁRIO
-    async function testRenato(){
-        latlong = [[-29.72496799019496, -53.71152216125474, 'CE'],//CE
-        [-29.71185254678608, -53.71825797209584, "Redes CTISM"],//ctism
-            [-29.720899943160862, -53.71377175917256, 'CPD UFSM'],//cpd
-            [-30.04106781047838, -51.20613743033479, 'Porto Alegre'],//poa
-            [-27.602041207752578, -48.522322031279, 'Florianópolis'],//popsc
-            [-23.56170666785491, -46.73169910458447, 'São Paulo']];//popsp
+
+    async function testRenato(data){
+
+        latlong = data;
+
+        console.log("FUNCIONANDO")
 
         removeMarkers();
         map.setZoom(17);
@@ -178,11 +218,11 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     function addMarker(location, text, zero = false) {
-       /* const marker = new google.maps.Marker({
-            position: location,
-            map: map,
-        });
-*/
+        /* const marker = new google.maps.Marker({
+             position: location,
+             map: map,
+         });
+ */
         const priceTag = document.createElement("div");
 
         priceTag.className = "price-tag";
@@ -194,18 +234,18 @@
             content: priceTag,
         });
         if ( !zero )
-        if (lastAddedMarker) {
-            // Draw a line from the last added marker to the current one
-            const line = new google.maps.Polyline({
-                path: [lastAddedMarker.position, marker.position],
-                geodesic: true,
-                strokeColor: '#FF0000', // Line color
-                strokeOpacity: 1.0,
-                strokeWeight: 2,
-            });
-            line.setMap(map);
-            lines.push(line);
-        }
+            if (lastAddedMarker) {
+                // Draw a line from the last added marker to the current one
+                const line = new google.maps.Polyline({
+                    path: [lastAddedMarker.position, marker.position],
+                    geodesic: true,
+                    strokeColor: '#FF0000', // Line color
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                });
+                line.setMap(map);
+                lines.push(line);
+            }
 
         lastAddedMarker = marker;
         markers.push(marker);
