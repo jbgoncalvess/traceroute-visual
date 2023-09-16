@@ -10,7 +10,7 @@ def get_lat_lon(ip):
 
             response = cliente.city(ip)
             if  response.city.name:
-                print(response)
+                #print(response)
                 #dados_loc = ({'city': (response.city.name), 'lat': (response.location.latitude), 'lon': (response.location.longitude)})
                 # print(dados_loc)
                 #return dados_loc

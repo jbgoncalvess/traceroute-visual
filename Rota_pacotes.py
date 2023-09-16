@@ -13,6 +13,12 @@ def busca(ping):
     dados_formatados = []
     localizacoes_geo = []
 
+    if not localizacoes:
+        localizacoes = [[-29.72496799019496, -53.71152216125474, 'CE'],
+                        [-29.71185254678608, -53.71825797209584, "Redes CTISM"],
+                        [-29.720899943160862, -53.71377175917256, 'CPD UFSM']
+                        ]
+
     for ttl in range(1, ttl_limit + 1):
 
         packet = IP(dst=ping, ttl=ttl) / ICMP()  # Enviando echo_request
@@ -22,7 +28,7 @@ def busca(ping):
             break
 
         if response:
-            print('TTL: {} -- IP: {}'.format(ttl, response.src))  # TTL e IPv4 do salto
+            #print('TTL: {} -- IP: {}'.format(ttl, response.src))  # TTL e IPv4 do salto
             dados_formatados.append(get_lat_lon(response.src))
             caminho_geral.append(get_lat_long(response.src))  # Se o IPv4 é válido, chamo o IPinfo e pego o data(conjunto de info)
             ip_anterior = response.src  # Para não repetir o IP, após chegar na rede desejada, armazeno a ultima resposta para comparar
@@ -32,17 +38,22 @@ def busca(ping):
             # print(dados)
             localizacoes_geo.append(dados)
 
-    print(caminho_geral)
-    print(localizacoes_geo)
+    #print(caminho_geral)
+    #print(localizacoes_geo)
 
     for dados_local in caminho_geral:   # Dados local é cada página do meu dicionário
         if 'bogon' not in dados_local:
             #print("IP:", dados_local["ip"])
-            localizacoes.append({"ip": dados_local["ip"], "lat": float(dados_local["loc"].split(",")[0]), "lon": float(dados_local["loc"].split(",")[1])})
+            localizacoes.append([float(dados_local["loc"].split(",")[0]), float(dados_local["loc"].split(",")[1]), dados_local["city"]])
+            #localizacoes.append({"ip": dados_local["ip"], "lat": float(dados_local["loc"].split(",")[0]), "lon": float(dados_local["loc"].split(",")[1])})
+            # lat, long e cidade
 
+    print('\n')
+    print(localizacoes)
+    return localizacoes
     #print(localizacoes) #Teste
     #print(localizacoes[1]["lat"])   #Teste
 
-    map(localizacoes)
+    #map(localizacoes)
 
     #Cada página do meu dicionário deve ficar assim:     "ip": "192.168.1.1", "lat": 37.7749, "lon": -122.4194
