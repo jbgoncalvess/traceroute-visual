@@ -3,7 +3,6 @@
 def busca(ping):
     from scapy.all import IP, ICMP, sr1  # Importar com "from" para não ter que usar scapy.all.  ...
     from IPinfo_geoloc import get_lat_long
-    from Construcao_map import map
     from GeoIP2 import get_lat_lon
 
     ttl_limit = 30  # Define um limite máximo de TTL para evitar loops infinitos
@@ -12,6 +11,7 @@ def busca(ping):
     localizacoes=[] #Dicionário com os dados com chave e valor certinho pra "Construcao_map - map"
     dados_formatados = []
     localizacoes_geo = []
+    loc_anterior = ""
 
     if not localizacoes:
         localizacoes = [[-29.72496799019496, -53.71152216125474, 'CE'],
@@ -41,12 +41,15 @@ def busca(ping):
     #print(caminho_geral)
     #print(localizacoes_geo)
 
+
     for dados_local in caminho_geral:   # Dados local é cada página do meu dicionário
-        if 'bogon' not in dados_local:
-            #print("IP:", dados_local["ip"])
+        if 'bogon' not in dados_local and dados_local["loc"] != loc_anterior:
+            print("IP:", dados_local["ip"])
             localizacoes.append([float(dados_local["loc"].split(",")[0]), float(dados_local["loc"].split(",")[1]), dados_local["city"]])
             #localizacoes.append({"ip": dados_local["ip"], "lat": float(dados_local["loc"].split(",")[0]), "lon": float(dados_local["loc"].split(",")[1])})
             # lat, long e cidade
+            loc_anterior = dados_local["loc"]   # Corrigindo réplicas de localização, por exemplo, 3 IPS na mesma cidade
+                                                # Acaba trazendo a mesma localização
 
     print('\n')
     print(localizacoes)
