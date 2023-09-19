@@ -1,14 +1,15 @@
 import requests
 
+def get_data(ip_address):
+    pass
+
+
 def get_lat_long(ip_address):
     api_key = "fee63210f68755"  # Minha chave de API - "TROCAR"
 
     url = f"https://ipinfo.io/{ip_address}/json?token={api_key}"  # URL do serviço de geocodificação
 
     response = requests.get(url)  # Faça a solicitação HTTP com a bib requests
-
-    #barra = "\033[91m" + "="  # Vermelho
-    #print("{}".format(barra), end="") # Usuário saber que não travou (Carregando)
 
     if response.status_code == 200:  # Se solicitação HTTP foi bem sucedida, verificação
         data = response.json()  # Passa os dados (.json) da página para o meu código

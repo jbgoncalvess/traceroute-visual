@@ -29,7 +29,7 @@ def busca(ping):
 
         if response:
             #print('TTL: {} -- IP: {}'.format(ttl, response.src))  # TTL e IPv4 do salto
-            dados_formatados.append(get_lat_lon(response.src))
+            #dados_formatados.append(get_lat_lon(response.src)) # GeoIP2
             caminho_geral.append(get_lat_long(response.src))  # Se o IPv4 é válido, chamo o IPinfo e pego o data(conjunto de info)
             ip_anterior = response.src  # Para não repetir o IP, após chegar na rede desejada, armazeno a ultima resposta para comparar
 
