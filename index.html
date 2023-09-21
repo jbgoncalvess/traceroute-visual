@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step-by-Step Position on Google Maps</title>
+    <title>Traceroute-maps</title>
     <style>
         html,
         body {
@@ -14,7 +14,7 @@
             padding: 0;
         }
         #map_canvas {
-            height: 900px;
+            min-height: 100vh;
         }
         #marker {
             width: 30px;
@@ -129,7 +129,7 @@
             // Crie um objeto com os dados a serem enviados
             const dados = site
 
-            // Faça uma solicitação POST para o back-end
+            // Faça uma solicitação POST para o back-endc
             fetch('http://localhost:5000/hostname', {
             method: 'POST',
             headers: {
