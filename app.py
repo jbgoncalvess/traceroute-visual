@@ -13,7 +13,8 @@ CORS(app)
 
 @app.route('/hostname', methods=['POST'])
 def post_hostname():
-    # Recebo os dados do cliente
+    # Recebo os dados do
+    #hostname = '8.8.8.8'
     hostname = request.get_json()
     # print(hostname)  # teste
     # Chamo a o código do back logo que recebo os dados do cliente
