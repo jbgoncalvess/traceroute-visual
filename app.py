@@ -1,7 +1,8 @@
 from Rota_pacotes import busca
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
+from Verifica_hostname import verifica
+import ipaddress
 app = Flask(__name__)
 CORS(app)
 
@@ -16,6 +17,8 @@ def post_hostname():
     # Recebo os dados do
     #hostname = '8.8.8.8'
     hostname = request.get_json()
+    hostname = verifica(hostname)
+
     print(hostname)
     #print(type(hostname))
     # print(hostname)  # teste
