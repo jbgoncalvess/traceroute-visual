@@ -11,7 +11,7 @@ def get_lat_long(ip_address, loc_anterior):
             if data['ip'] == '200.18.74.1':
                 return [-29.6842, -53.8069, 'Santa Maria']      # Tratando erro de 'Rio grande' 'SM'
             # print(data)
-            # print(data["loc"])
+            print(data["loc"])
             return [float(data["loc"].split(",")[0]), float(data["loc"].split(",")[1]), data["city"]]   # Agora, já retorno formatado
 
         return []  #Retorna lista vazia, já que preciso retornar algo

@@ -36,8 +36,7 @@ def busca(ping):
             #loc_anterior = {'loc': {str(caminho_geral[-1])} }
             if caminho_geral[-1]:
                 localizacoes.append(caminho_geral[-1])  # Tratando listas vazias
-                loc_anterior = f'{str(localizacoes[-1][0])},{str(localizacoes[-1][1])}' # Posição anterior já formatada, passada por parâmetro
-                #loc_anterior = {'loc': str(localizacoes[])}
+                loc_anterior = "{:.4f},{:.4f}".format((localizacoes[-1][0]), (localizacoes[-1][1])) # Posição anterior já formatada, passada por parâmetro
                 print('teste')
                 print(loc_anterior)
                 #print(localizacoes)
