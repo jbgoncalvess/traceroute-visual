@@ -28,8 +28,6 @@ def busca(ping):
         if response and ip_anterior == response.src:  # NÃO FICAR MOSTRANDO O MESMO IP, se "ip_anterior == resposta nova", sai do laço.
             break
 
-        ip_anterior = response.src  # Para não repetir o IP, após chegar na rede desejada, armazeno a ultima resposta para comparar
-
         if response:
             #print('TTL: {} -- IP: {}'.format(ttl, response.src))  # TTL e IPv4 do salto
             #dados_formatados.append(get_lat_lon(response.src)) # GeoIP2
@@ -43,7 +41,7 @@ def busca(ping):
                 print('teste')
                 print(loc_anterior)
                 #print(localizacoes)
-
+            ip_anterior = response.src  # Para não repetir o IP, após chegar na rede desejada, armazeno a ultima resposta para comparar
     # for dados_local in caminho_geral:   # Tratar Dados de listas vazias
     #     if dados_local:
     #         localizacoes.append(dados_local)
