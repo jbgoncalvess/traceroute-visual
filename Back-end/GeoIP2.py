@@ -1,6 +1,7 @@
 import geoip2.webservice
 import geoip2.errors
 
+
 def get_lat_lon(ip):
     conta_ID = 913514
     chave_API = "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"

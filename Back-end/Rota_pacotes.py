@@ -1,5 +1,6 @@
 """ Pingando para fora """
 
+
 def busca(ping):
     from scapy.all import IP, ICMP, sr1  # Importar com "from" para não ter que usar scapy.all.  ...
     from IPinfo_geoloc import get_lat_long
@@ -12,12 +13,6 @@ def busca(ping):
     dados_formatados = []
     localizacoes_geo = []
     loc_anterior = {}
-
-    if not localizacoes:
-        localizacoes = [[-29.72496799019496, -53.71152216125474, 'CE'],
-                        [-29.71185254678608, -53.71825797209584, "Redes CTISM"],
-                        [-29.720899943160862, -53.71377175917256, 'CPD UFSM']
-                        ]
 
 
     for ttl in range(1, ttl_limit + 1):

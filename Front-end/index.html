@@ -90,6 +90,7 @@
 </div>
 <script>
     var map, marker;
+    {# Localização inicial de onde você está#}
     var startPos = [-29.72496799019496, -53.71152216125474];
     let markers = [];
     let lines = [];
@@ -153,17 +154,6 @@
        // await dados_back()  //chamar pra pegar dados do back. OUTRA ROTA
 
 }
-
-    // async function dados_back() {
-    //     try {
-    //         const data = await fetch('http://localhost:5000/dados').then(response => response.json());
-    //         console.log(data)
-    //         await testRenato(data);
-    //     } catch (error) {
-    //         console.error('Erro ao carregar dados do backend:', error);
-    //     }
-    // }
-    //TESTE COMENTÁRIO
 
     async function testRenato(data){
 

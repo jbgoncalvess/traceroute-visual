@@ -1,5 +1,6 @@
 import requests
 
+
 def get_lat_long(ip_address, loc_anterior):
     api_key = "fee63210f68755"  # Minha chave de API - "TROCAR"
     url = f"https://ipinfo.io/{ip_address}/json?token={api_key}"  # URL do serviço de geocodificação
