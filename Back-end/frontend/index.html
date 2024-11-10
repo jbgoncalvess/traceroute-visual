@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGhkf1Pi21ytiDbb29EfZ56kY2F07xq5k&callback=initMap&libraries=geometry&libraries=marker&v=beta" defer></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traceroute-maps</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map_canvas {
+            min-height: 100vh;
+        }
+        #marker {
+            width: 30px;
+            height: 30px;
+            background-image: url('custom-marker.png');
+            background-size: cover;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            transition: transform 0.5s ease-in-out;
+        }
+        #search-box-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1; /* Ensure the search box is on top of the map */
+        }
+
+        #search-input {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+
+        #go-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .price-tag {
+            background-color: #4285F4;
+            border-radius: 8px;
+            color: #FFFFFF;
+            font-size: 14px;
+            padding: 10px 15px;
+            position: relative;
+        }
+
+        .price-tag::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translate(-50%, 0);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #4285F4;
+        }
+
+        [class$=api-load-alpha-banner] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="map-container">
+    <div id="search-box-container">
+        <input type="text" id="search-input" name="hostname" placeholder="Digite um site">
+        <button id="go-button" onclick="post_get_back();">Ir</button>
+    </div>
+    <div id="map_canvas"></div>
+</div>
+<script>
+    var map, marker;
+    var startPos = [-27.55078961463131, -48.63223024047737];
+    let markers = [];
+    let lines = [];
+    let lastAddedMarker;
+//
+    var delay = 100;
+
+    function initMap()
+    {
+        var myOptions = {
+            zoom: 17,
+            center: new google.maps.LatLng(startPos[0], startPos[1]),
+            mapTypeId: 'roadmap',//'hybrid',
+            mapId: "4504f8b37365c3d0a",
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(startPos[0], startPos[1]),
+            map: map
+        });
+    }
+
+    async function post_get_back(){
+
+            // Pego os dados da caixinha de entrada
+            const site = document.getElementById('search-input').value;
+
+            // Verifica se o campo não está vazio
+            if (site.trim() !== '') {
+            // Crie um objeto com os dados a serem enviados
+            const dados = site
+
+            // Faça uma solicitação POST para o back-endc
+            fetch('http://localhost:5000/hostname', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+        },
+            body: JSON.stringify(dados)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                testRenato(data);       //Ja devolvo no post do cliente
+            // Lida com a resposta do servidor, se necessário
+        })
+            .catch(error => {
+            console.error('Erro ao enviar dados para o back-end:', error);
+        });
+        } else {
+            // Campo vazio, pode lidar com isso de acordo com seus requisitos
+            alert('Por favor, adiciona um site ou um ip antes de continuar.');
+        }
+       // await dados_back()  //chamar pra pegar dados do back. OUTRA ROTA
+
+}
+    //TESTE COMENTÁRIO
+
+    async function testRenato(data){
+
+        latlong = data;
+
+        console.log("FUNCIONANDO")
+
+        removeMarkers();
+        map.setZoom(17);
+        addMarker( new google.maps.LatLng(startPos[0], startPos[1]), "Bryan", true);
+        map.panTo(new google.maps.LatLng(startPos[0], startPos[1] ));
+        await sleep(500);
+        var bounds = new google.maps.LatLngBounds();
+        var numStep = 15;
+        for ( i = 1; i < latlong.length; i++){
+            const [lat, lng, txt] = latlong[i];
+            addMarker( new google.maps.LatLng(lat,lng), txt)
+            bounds.extend(new google.maps.LatLng(lat,lng));
+
+            if ( i === 3){
+                for ( j = map.getZoom(); j >= 8; j--) {
+                    map.setZoom(j);
+                    j--
+                    await sleep(500);
+                }
+                map.setZoom(8);
+            }
+
+            var deltaLat = ((latlong[i-1][0] - lat) / numStep) *-1;
+            var deltaLng = ((latlong[i-1][1] - lng) / numStep) *-1;
+            la = latlong[i-1][0] + deltaLat;
+            lo = latlong[i-1][1] + deltaLng;
+            for ( steps = 0; steps < numStep; steps++){
+
+                map.panTo(new google.maps.LatLng(la, lo ));
+                la += deltaLat;
+                lo += deltaLng;
+                await sleep(200);
+
+            }
+
+
+
+            //map.setZoom(2)
+            await sleep(1000);
+
+        }
+        map.fitBounds(bounds);
+
+    }
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    function addMarker(location, text, zero = false) {
+        /* const marker = new google.maps.Marker({
+             position: location,
+             map: map,
+         });
+ */
+        const priceTag = document.createElement("div");
+
+        priceTag.className = "price-tag";
+        priceTag.textContent = text;
+
+        const marker = new google.maps.marker.AdvancedMarkerView({
+            map,
+            position: location,
+            content: priceTag,
+        });
+        if ( !zero )
+            if (lastAddedMarker) {
+                // Draw a line from the last added marker to the current one
+                const line = new google.maps.Polyline({
+                    path: [lastAddedMarker.position, marker.position],
+                    geodesic: true,
+                    strokeColor: '#FF0000', // Line color
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                });
+                line.setMap(map);
+                lines.push(line);
+            }
+
+        lastAddedMarker = marker;
+        markers.push(marker);
+    }
+
+    function removeMarkers() {
+        for (let i = 0; i < markers.length; i++) {
+            markers[i].setMap(null); // Remove the marker from the map
+        }
+
+        // Clear the markers array
+        markers.length = 0;
+
+        for (let i = 0; i < lines.length; i++) {
+            lines[i].setMap(null); // Remove the marker from the map
+        }
+
+        // Clear the markers array
+        lines.length = 0;
+    }
+
+
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+</body>
+</html>
